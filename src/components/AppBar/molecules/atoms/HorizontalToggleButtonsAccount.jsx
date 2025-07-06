@@ -25,21 +25,21 @@ const RoundToggleButton = styled(ToggleButton)(({ theme }) => ({
 }));
 
 export default function HorizontalToggleButtonsAccount() {
-	const [selected, setSelected] = useState("center");
+	const [selected, setSelected] = useState("");
 
 	const handleClick = (value) => {
-		setSelected(value);
+		setSelected((prev) => (prev === value ? "" : value));
 	};
 
 	return (
 		<div style={{ display: "flex", gap: "0.5rem" }}>
-			<RoundToggleButton selected={selected === "center"} onChange={() => handleClick("center")} aria-label='widgets'>
+			<RoundToggleButton selected={selected === "1"} onChange={() => handleClick("1")} aria-label='widgets'>
 				<WidgetsIcon />
 			</RoundToggleButton>
-			<RoundToggleButton selected={selected === "right"} onChange={() => handleClick("right")} aria-label='messages'>
+			<RoundToggleButton selected={selected === "2"} onChange={() => handleClick("2")} aria-label='messages'>
 				<MessageIcon />
 			</RoundToggleButton>
-			<RoundToggleButton selected={selected === "justify"} onChange={() => handleClick("justify")} aria-label='notifications'>
+			<RoundToggleButton selected={selected === "3"} onChange={() => handleClick("3")} aria-label='notifications'>
 				<NotificationsIcon />
 			</RoundToggleButton>
 		</div>

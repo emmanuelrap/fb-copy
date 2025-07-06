@@ -5,11 +5,11 @@ import ItemsLeft from "./molecules/ItemsLeft";
 import { Paper } from "@mui/material";
 import "../../App.css";
 
-const AppBar = () => {
+const AppBar = ({ pageSelected, onlyHomeIcon }) => {
 	return (
-		<Paper elevation={1} className='AppBar'>
+		<Paper elevation={3} className='AppBar'>
 			<ItemsLeft />
-			<ItemsCenter />
+			<ItemsCenter pageSelected={pageSelected} onlyHomeIcon={onlyHomeIcon} />
 			<ItemsRight />
 		</Paper>
 	);

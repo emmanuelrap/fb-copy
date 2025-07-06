@@ -13,9 +13,9 @@ import Diversity3Icon from "@mui/icons-material/Diversity3";
 import Groups2Icon from "@mui/icons-material/Groups2";
 import GroupIcon from "@mui/icons-material/Group";
 import { Avatar, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const itemsDefault = [
-	{ image: "/statics/images/avatars/perfil.jpg", text: "Carlos Zambrano" },
 	{ image: <PanoramaFishEyeIcon />, text: "Meta AI" },
 	{ image: <GroupIcon />, text: "Amigos" },
 	{ image: <Groups2Icon />, text: "Grupos" },
@@ -28,6 +28,11 @@ const myItems = [
 ];
 
 const GrupsList = () => {
+	const navigate = useNavigate();
+
+	const handleClickPerfil = () => {
+		navigate(`/perfil/${JSON.parse(localStorage.getItem("user") || "{}").id}`);
+	};
 	return (
 		<Box
 			sx={{
@@ -40,6 +45,14 @@ const GrupsList = () => {
 		>
 			<nav aria-label='default items list'>
 				<List>
+					<ListItem disablePadding key={JSON.parse(localStorage.getItem("user") || "{}").full_name}>
+						<ListItemButton onClick={handleClickPerfil}>
+							<ListItemIcon>
+								<Avatar src={JSON.parse(localStorage.getItem("user") || "{}").avatar_url} alt={JSON.parse(localStorage.getItem("user") || "{}").full_name} sx={{ width: 32, height: 32 }} />
+							</ListItemIcon>
+							<ListItemText primary={JSON.parse(localStorage.getItem("user") || "{}").full_name} />
+						</ListItemButton>
+					</ListItem>
 					{itemsDefault.map((i) => {
 						return (
 							<ListItem disablePadding key={i.text}>

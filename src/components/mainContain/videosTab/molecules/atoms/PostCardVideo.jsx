@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import {
 	Card,
 	CardHeader,
-	CardMedia,
 	CardContent,
 	CardActions,
 	Avatar,
@@ -29,12 +28,14 @@ import { useDispatch } from "react-redux";
 import { addComment, addLike } from "../../../../../redux/slices/postsSlice";
 import Swal from "sweetalert2";
 
-const PostCard = ({ post }) => {
+const PostVideoCard = ({ post, fetchPosts }) => {
 	const dispatch = useDispatch();
 	const loggedUser = JSON.parse(localStorage.getItem("user") || "{}");
+
 	const [showCommentBox, setShowCommentBox] = useState(false);
 	const [comment, setComment] = useState("");
 	const [commenting, setCommenting] = useState(false);
+
 	const [liked, setLiked] = useState(false);
 	const [liking, setLiking] = useState(false);
 	const [animateLike, setAnimateLike] = useState(false);
@@ -60,11 +61,17 @@ const PostCard = ({ post }) => {
 			})
 		)
 			.unwrap()
+			.then(() => {
+				fetchPosts();
+			})
 			.catch((error) => {
 				Swal.fire("Error", error || "No se pudo agregar comentario", "error");
+			})
+			.finally(() => {
+				setComment("");
+				setCommenting(false);
+				fetchPosts();
 			});
-		setComment("");
-		setCommenting(false);
 	};
 
 	const handleLikeClick = () => {
@@ -75,6 +82,7 @@ const PostCard = ({ post }) => {
 			.unwrap()
 			.then(() => {
 				setLiked((prev) => !prev);
+				fetchPosts();
 			})
 			.catch((error) => {
 				Swal.fire("Error", error || "No se pudo cambiar el like", "error");
@@ -96,7 +104,6 @@ const PostCard = ({ post }) => {
 		<>
 			<Card sx={{ margin: "1rem auto", borderRadius: 5, boxShadow: 5, mx: "1.5rem" }}>
 				<CardHeader
-					sx={{ mb: "-1rem" }}
 					avatar={<Avatar src={post.user?.avatar_url || ""} />}
 					action={
 						<IconButton>
@@ -115,10 +122,7 @@ const PostCard = ({ post }) => {
 					<Typography variant='body1'>{post.text_content}</Typography>
 				</CardContent>
 
-				{/* Imágenes */}
-				{post.media_url && post.media_type === "image" && <CardMedia component='img' image={post.media_url} alt='Imagen' sx={{ maxHeight: 500, objectFit: "cover" }} />}
-
-				{/* Videos */}
+				{/* VIDEO */}
 				{post.media_url && post.media_type === "video" && (
 					<Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
 						<video src={post.media_url} controls style={{ maxWidth: "100%", borderRadius: "12px" }} />
@@ -137,8 +141,6 @@ const PostCard = ({ post }) => {
 				<CardActions disableSpacing sx={{ borderTop: "1px solid #eee", justifyContent: "space-around" }}>
 					<Button
 						onClick={handleLikeClick}
-						variant='text'
-						fullWidth
 						sx={{
 							flex: 1,
 							textTransform: "none",
@@ -191,7 +193,6 @@ const PostCard = ({ post }) => {
 					</Tooltip>
 				</CardActions>
 
-				{/* Comentarios */}
 				{showCommentBox && (
 					<>
 						{post.comments?.length > 0 && <Divider />}
@@ -224,16 +225,7 @@ const PostCard = ({ post }) => {
 				)}
 			</Card>
 
-			{/* Modal de Likes */}
-			<Dialog
-				open={likesModalOpen}
-				onClose={handleCloseLikes}
-				fullWidth
-				maxWidth='xs'
-				sx={{
-					"& .MuiPaper-root": { borderRadius: 3 },
-				}}
-			>
+			<Dialog open={likesModalOpen} onClose={handleCloseLikes} fullWidth maxWidth='xs' sx={{ "& .MuiPaper-root": { borderRadius: 3 } }}>
 				<DialogTitle sx={{ backgroundColor: "primary.main", color: "white" }}>Personas a las que les gusta</DialogTitle>
 				<DialogContent>
 					<List>
@@ -257,4 +249,4 @@ const PostCard = ({ post }) => {
 	);
 };
 
-export default PostCard;
+export default PostVideoCard;

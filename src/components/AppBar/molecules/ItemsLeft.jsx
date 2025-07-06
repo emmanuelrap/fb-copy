@@ -1,12 +1,13 @@
 import React, { useState } from "react";
-import { Box, Avatar, TextField, Autocomplete } from "@mui/material";
+import { Box, Avatar, TextField, Autocomplete, IconButton } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import { useNavigate } from "react-router-dom";
 
 const recentSearches = ["Carlos Zambrano", "Recetas caceras", "Videos de risa"];
 
 const ItemsLeft = () => {
 	const [focused, setFocused] = useState(false);
-
+	const navigate = useNavigate();
 	return (
 		<Box
 			sx={{
@@ -16,7 +17,16 @@ const ItemsLeft = () => {
 				alignItems: "center",
 			}}
 		>
-			<Avatar sx={{ width: 36, height: 36, mr: "0.5rem" }} alt='Remy Sharp' src='/statics/images/icons/fb.png' />
+			<IconButton
+				onClick={() => navigate("/home")}
+				sx={{
+					"&:hover": {
+						backgroundColor: "transparent", // quita el círculo gris del hover
+					},
+				}}
+			>
+				<Avatar sx={{ width: 36, height: 36 }} alt='Mi perfil' src='/statics/images/icons/fb.png' />
+			</IconButton>
 
 			<Box sx={{ position: "relative", width: 250 }}>
 				<SearchIcon

@@ -9,66 +9,65 @@ import { Avatar, Typography, IconButton } from "@mui/material";
 
 import SearchIcon from "@mui/icons-material/Search";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-
-const itemsDefault = [
-	{
-		image: "/statics/images/avatars/perfil.jpg",
-		text: "Carlos Zambrano",
-		hasStatus: true,
-		isOnline: true,
-		lastConnection: "Hace 2 min",
-		lastConnectionDate: new Date(Date.now() - 2 * 60 * 1000), // para ordenar
-		note: "Saquen plan",
-	},
-	{
-		image: "/statics/images/avatars/perfil.jpg",
-		text: "María Pérez",
-		hasStatus: false,
-		isOnline: true,
-		lastConnection: "Hace 10 min",
-		lastConnectionDate: new Date(Date.now() - 10 * 60 * 1000),
-		note: "La vida no es como la pintan",
-	},
-	{
-		image: "/statics/images/avatars/perfil.jpg",
-		text: "Juan López",
-		hasStatus: true,
-		isOnline: false,
-		lastConnection: "Hace 1 hora",
-		lastConnectionDate: new Date(Date.now() - 60 * 60 * 1000),
-		note: "Que ganas de un sushi",
-	},
-	{
-		image: "/statics/images/avatars/perfil.jpg",
-		text: "Ana Gómez",
-		hasStatus: false,
-		isOnline: false,
-		lastConnection: "Hace 3 horas",
-		lastConnectionDate: new Date(Date.now() - 3 * 60 * 60 * 1000),
-		note: "u______u",
-	},
-];
+import { fetchUsers } from "../../../../redux/slices/userSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 // Función para ordenar
 const ordenarUsuarios = (a, b) => {
 	if (a.isOnline && !b.isOnline) return -1;
 	if (!a.isOnline && b.isOnline) return 1;
-	return b.lastConnectionDate.getTime() - a.lastConnectionDate.getTime();
+
+	const dateA = new Date(a.lastConnection);
+	const dateB = new Date(b.lastConnection);
+
+	return dateB.getTime() - dateA.getTime();
 };
 
-// Función para obtener hace cuanto se conecto
-const getTimeAgo = (date) => {
+// Función para obtener hace cuanto se conectó
+const getTimeAgo = (dateString) => {
+	const date = new Date(dateString);
 	const now = new Date();
 	const diffMs = now - date;
 	const diffMins = Math.floor(diffMs / (1000 * 60));
-	if (diffMins < 60) return `${diffMins}m`;
+
+	if (diffMins < 60) {
+		return `${diffMins}min`;
+	}
+
 	const diffHours = Math.floor(diffMins / 60);
-	return `${diffHours}h`;
+	if (diffHours < 24) {
+		return `${diffHours}h`;
+	}
+
+	const diffDays = Math.floor(diffHours / 24);
+	if (diffDays < 7) {
+		return `${diffDays}d`;
+	}
+
+	const diffWeeks = Math.floor(diffDays / 7);
+	if (diffWeeks < 4) {
+		return `${diffWeeks}w`;
+	}
+
+	const diffMonths = Math.floor(diffDays / 30);
+	if (diffMonths < 12) {
+		return `${diffMonths}m`;
+	}
+
+	const diffYears = Math.floor(diffDays / 365);
+	return `${diffYears}y`;
 };
 
 const ChatList = () => {
+	const { users } = useSelector((state) => state.users);
+
 	// Ordenar la lista antes de renderizar
-	const sortedItems = [...itemsDefault].sort(ordenarUsuarios);
+	const sortedItems = [...users].sort(ordenarUsuarios);
+
+	React.useEffect(() => {
+		//dispatch(fetchUsers);
+		console.log("users desde chatList", users);
+	}, [users]);
 
 	return (
 		<Box
@@ -103,7 +102,7 @@ const ChatList = () => {
 				<List>
 					{sortedItems.map((i) => {
 						return (
-							<ListItem disablePadding key={i.text} sx={{ my: "-0.75rem" }}>
+							<ListItem disablePadding key={i.full_name} sx={{ my: "-0.75rem" }}>
 								<ListItemButton>
 									<>
 										<ListItemIcon>
@@ -120,9 +119,9 @@ const ChatList = () => {
 											>
 												{/* SI NO TIENE ESTADO HACER MAS GRANDE LA IMAGEN */}
 												{i.hasStatus ? (
-													<Avatar src={i.image} alt={i.text} sx={{ width: 32, height: 32, display: "block" }} />
+													<Avatar src={i.avatar_url} sx={{ width: 32, height: 32, display: "block" }} />
 												) : (
-													<Avatar src={i.image} alt={i.text} sx={{ mx: "3px", width: 38, height: 38, display: "block" }} />
+													<Avatar src={i.avatar_url} sx={{ mx: "3px", width: 38, height: 38, display: "block" }} />
 												)}
 
 												{/* SI ESTA ONLINE POONER PUNTITO */}
@@ -154,17 +153,17 @@ const ChatList = () => {
 															border: "1px solid #ccc",
 														}}
 													>
-														{getTimeAgo(i.lastConnectionDate)}
+														{getTimeAgo(i.lastConnection)}
 													</Box>
 												)}
 											</Box>
 										</ListItemIcon>
 										<ListItemText
-											primary={i.text}
+											primary={i.full_name}
 											secondary={i.note}
 											slotProps={{
 												primary: {
-													sx: { ml: "-0.25rem", fontWeight: "bold", fontSize: "1rem" },
+													sx: { ml: "-0.25rem", fontWeight: "bold", fontSize: "0.9rem" },
 												},
 												secondary: {
 													sx: { ml: "-0.25rem", fontSize: "0.75rem", color: "#777", mt: -0.25 },
