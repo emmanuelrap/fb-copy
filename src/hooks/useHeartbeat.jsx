@@ -1,13 +1,13 @@
 import { useEffect } from "react";
 import axios from "axios";
 
-export const useUserPing = (userId) => {
+export const useUserPing = (userid) => {
 	useEffect(() => {
-		if (!userId) return;
+		if (!userid) return;
 
 		const sendPing = () => {
 			axios
-				.post("http://localhost:5000/api/users/ping", { userId })
+				.post("http://localhost:5000/api/users/ping", { userid })
 				.then(() => console.log("Ping enviado"))
 				.catch((err) => console.error("Error enviando ping:", err));
 		};
@@ -17,5 +17,5 @@ export const useUserPing = (userId) => {
 		const interval = setInterval(sendPing, 60 * 1000); // cada 1 min
 
 		return () => clearInterval(interval); // limpia cuando desmonta
-	}, [userId]);
+	}, [userid]);
 };

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
 	Card,
 	CardHeader,
@@ -42,8 +42,36 @@ const PostVideoCard = ({ post, fetchPosts }) => {
 
 	const [likesModalOpen, setLikesModalOpen] = useState(false);
 
+	const videoRef = useRef(null);
+
 	useEffect(() => {
-		if (post.likes?.some((like) => like.userId === loggedUser.id)) setLiked(true);
+		const videoElement = videoRef.current;
+
+		const observer = new IntersectionObserver(
+			([entry]) => {
+				if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+					videoElement.play();
+				} else {
+					videoElement.pause();
+				}
+			},
+			{
+				threshold: [0.6], // cuando al menos 60% sea visible
+			}
+		);
+
+		if (videoElement) {
+			observer.observe(videoElement);
+		}
+
+		return () => {
+			if (videoElement) observer.unobserve(videoElement);
+		};
+	}, []);
+
+	useEffect(() => {
+		console.log("post->", post);
+		if (post.likes?.some((like) => like.userid === loggedUser.id)) setLiked(true);
 	}, []);
 
 	const handleToggleComment = () => setShowCommentBox((prev) => !prev);
@@ -54,8 +82,8 @@ const PostVideoCard = ({ post, fetchPosts }) => {
 
 		dispatch(
 			addComment({
-				postId: post.id,
-				userId: loggedUser?.id,
+				postid: post.id,
+				userid: loggedUser?.id,
 				content: comment,
 				media_url: null,
 			})
@@ -78,7 +106,10 @@ const PostVideoCard = ({ post, fetchPosts }) => {
 		if (liking) return;
 		setLiking(true);
 
-		dispatch(addLike({ postId: post.id, userId: loggedUser.id }))
+		const JSON = { postid: post.id, userid: loggedUser.id };
+		console.log("JSON like->", JSON);
+
+		dispatch(addLike(JSON))
 			.unwrap()
 			.then(() => {
 				setLiked((prev) => !prev);
@@ -102,7 +133,7 @@ const PostVideoCard = ({ post, fetchPosts }) => {
 
 	return (
 		<>
-			<Card sx={{ margin: "1rem auto", borderRadius: 5, boxShadow: 5, mx: "1.5rem" }}>
+			<Card sx={{ borderRadius: 5, boxShadow: 5, mx: "2rem", mt: "1rem" }}>
 				<CardHeader
 					avatar={<Avatar src={post.user?.avatar_url || ""} />}
 					action={
@@ -125,7 +156,7 @@ const PostVideoCard = ({ post, fetchPosts }) => {
 				{/* VIDEO */}
 				{post.media_url && post.media_type === "video" && (
 					<Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
-						<video src={post.media_url} controls style={{ maxWidth: "100%", borderRadius: "12px" }} />
+						<video ref={videoRef} src={post.media_url} controls style={{ maxWidth: "100%", borderRadius: "12px" }} />
 					</Box>
 				)}
 
@@ -224,8 +255,16 @@ const PostVideoCard = ({ post, fetchPosts }) => {
 					</>
 				)}
 			</Card>
-
-			<Dialog open={likesModalOpen} onClose={handleCloseLikes} fullWidth maxWidth='xs' sx={{ "& .MuiPaper-root": { borderRadius: 3 } }}>
+			{/* Modal de Likes */}
+			<Dialog
+				open={likesModalOpen}
+				onClose={handleCloseLikes}
+				fullWidth
+				maxWidth='xs'
+				sx={{
+					"& .MuiPaper-root": { borderRadius: 3 },
+				}}
+			>
 				<DialogTitle sx={{ backgroundColor: "primary.main", color: "white" }}>Personas a las que les gusta</DialogTitle>
 				<DialogContent>
 					<List>
@@ -234,7 +273,7 @@ const PostVideoCard = ({ post, fetchPosts }) => {
 								<ListItemAvatar>
 									<Avatar src={like.user?.avatar_url || ""} />
 								</ListItemAvatar>
-								<ListItemText primary={like.user?.full_name} secondary={new Date(like.created_at).toLocaleString()} />
+								<ListItemText primary={like?.full_name} secondary={new Date(like.created_at).toLocaleString()} />
 							</ListItem>
 						))}
 						{(!post.likes || post.likes.length === 0) && (

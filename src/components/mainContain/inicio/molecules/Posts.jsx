@@ -10,6 +10,8 @@ const Posts = () => {
 	const dispatch = useDispatch();
 	const { posts, loading, page, limit, hasMore } = useSelector((state) => state.posts);
 	const [mapedPost, setMapedPost] = useState([]);
+	const [reload, setReload] = useState(false);
+	const timeoutRef = useRef(null);
 
 	useEffect(() => {
 		const filteredPosts = posts.filter((post) => post.media_type !== "video");
@@ -19,8 +21,7 @@ const Posts = () => {
 
 	useEffect(() => {
 		dispatch(fetchPosts({ page: 1, limit }));
-	}, [dispatch, limit]);
-	const timeoutRef = useRef(null);
+	}, [dispatch, limit, reload]);
 
 	const handleScroll = useCallback(() => {
 		if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500 && !loading && hasMore) {
@@ -40,6 +41,7 @@ const Posts = () => {
 			if (timeoutRef.current) clearTimeout(timeoutRef.current);
 		};
 	}, [handleScroll]);
+
 	return (
 		<Box
 			sx={{
