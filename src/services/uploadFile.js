@@ -2,6 +2,8 @@ import axios from "axios";
 import { api } from "../api";
 
 export const uploadImageToCloudinary = async (formData) => {
+	console.log("[ejecución] uploadImageToCloudinary()");
+	console.log("formData ->", formData);
 	try {
 		const uploadRes = await axios.post(api.upload_image, formData, {
 			headers: { "Content-Type": "multipart/form-data" },

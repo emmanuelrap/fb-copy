@@ -6,16 +6,15 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { Avatar, Typography, IconButton } from "@mui/material";
-
 import SearchIcon from "@mui/icons-material/Search";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import { fetchUsers } from "../../../../redux/slices/userSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 // Función para ordenar
 const ordenarUsuarios = (a, b) => {
-	if (a.isOnline && !b.isOnline) return -1;
-	if (!a.isOnline && b.isOnline) return 1;
+	console.log("A-->", a);
+	if (a.isonline && !b.isonline) return -1;
+	if (!a.isonline && b.isonline) return 1;
 
 	const dateA = new Date(a.lastConnection);
 	const dateB = new Date(b.lastConnection);
@@ -125,7 +124,7 @@ const ChatList = () => {
 												)}
 
 												{/* SI ESTA ONLINE POONER PUNTITO */}
-												{i.isOnline ? (
+												{i.isonline ? (
 													<Box
 														sx={{
 															position: "absolute",
@@ -153,7 +152,7 @@ const ChatList = () => {
 															border: "1px solid #ccc",
 														}}
 													>
-														{getTimeAgo(i.lastConnection)}
+														{getTimeAgo(i.lastconnection)}
 													</Box>
 												)}
 											</Box>

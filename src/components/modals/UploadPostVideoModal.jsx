@@ -60,7 +60,7 @@ export default function UploadVideoModal({ onClose }) {
 			}
 
 			await createPost({
-				userId: JSON.parse(localStorage.getItem("user") || "{}").id,
+				userid: JSON.parse(localStorage.getItem("user") || "{}").id,
 				text_content: postText,
 				media_url: mediaUrl,
 				media_type: mediaUrl ? "video" : null,

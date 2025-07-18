@@ -9,8 +9,8 @@ export const fetchPosts = createAsyncThunk("posts/fetchPosts", async ({ page = 1
 });
 
 // Thunk para agregar comentario
-export const addComment = createAsyncThunk("posts/addComment", async ({ postId, userId, content, media_url }, thunkAPI) => {
-	const response = await createComment({ postId, userId, content, media_url });
+export const addComment = createAsyncThunk("posts/addComment", async ({ postid, userid, content, media_url }, thunkAPI) => {
+	const response = await createComment({ postid, userid, content, media_url });
 	if (response.success) {
 		return response.comment;
 	} else {
@@ -19,11 +19,11 @@ export const addComment = createAsyncThunk("posts/addComment", async ({ postId, 
 });
 
 // Thunk para agregar like
-export const addLike = createAsyncThunk("posts/addLike", async ({ postId, userId }, thunkAPI) => {
+export const addLike = createAsyncThunk("posts/addLike", async ({ postid, userid }, thunkAPI) => {
 	try {
-		const response = await addLikeToPost({ postId, userId }); // tu llamada a Axios
+		const response = await addLikeToPost({ postid, userid }); // tu llamada a Axios
 		if (response.success) {
-			return { postId, like: response.like }; // trae el like del backend (o null si quitó)
+			return { postid, like: response.like }; // trae el like del backend (o null si quitó)
 		} else {
 			return thunkAPI.rejectWithValue(response.error || "Error al dar like");
 		}
@@ -81,7 +81,7 @@ const postSlice = createSlice({
 			.addCase(addComment.fulfilled, (state, action) => {
 				state.commenting = false;
 				const newComment = action.payload;
-				const post = state.posts.find((p) => p.id === newComment.postId);
+				const post = state.posts.find((p) => p.id === newComment.postid);
 				if (post) {
 					post.comments = post.comments ? [...post.comments, newComment] : [newComment];
 				}
@@ -98,19 +98,20 @@ const postSlice = createSlice({
 			})
 			.addCase(addLike.fulfilled, (state, action) => {
 				state.liking = false;
-				const { postId, like } = action.payload;
-				const post = state.posts.find((p) => p.id === postId);
+				const { postid, like } = action.payload;
+
+				console.log("Like recibido:", like);
+				const post = state.posts.find((p) => p.id === postid);
 
 				if (post) {
 					if (!post.likes) post.likes = [];
 
 					if (like === null) {
 						// Se quitó el like
-						post.likes = post.likes.filter((l) => l.userId !== action.meta.arg.userId);
+						post.likes = post.likes.filter((l) => l.userid !== action.meta.arg.userid);
 						post.likesCount = (post.likesCount || 1) - 1;
 						if (post.likesCount < 0) post.likesCount = 0;
 					} else {
-						// Se agregó un like nuevo con data del user
 						post.likes.push(like);
 						post.likesCount = (post.likesCount || 0) + 1;
 					}

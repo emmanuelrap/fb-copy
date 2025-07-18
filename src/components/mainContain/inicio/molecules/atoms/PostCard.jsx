@@ -38,11 +38,10 @@ const PostCard = ({ post }) => {
 	const [liked, setLiked] = useState(false);
 	const [liking, setLiking] = useState(false);
 	const [animateLike, setAnimateLike] = useState(false);
-
 	const [likesModalOpen, setLikesModalOpen] = useState(false);
 
 	useEffect(() => {
-		if (post.likes?.some((like) => like.userId === loggedUser.id)) setLiked(true);
+		if (post.likes?.some((like) => like.userid === loggedUser.id)) setLiked(true);
 	}, []);
 
 	const handleToggleComment = () => setShowCommentBox((prev) => !prev);
@@ -53,8 +52,8 @@ const PostCard = ({ post }) => {
 
 		dispatch(
 			addComment({
-				postId: post.id,
-				userId: loggedUser?.id,
+				postid: post.id,
+				userid: loggedUser?.id,
 				content: comment,
 				media_url: null,
 			})
@@ -66,15 +65,17 @@ const PostCard = ({ post }) => {
 		setComment("");
 		setCommenting(false);
 	};
-
 	const handleLikeClick = () => {
 		if (liking) return;
 		setLiking(true);
 
-		dispatch(addLike({ postId: post.id, userId: loggedUser.id }))
+		const JSON = { postid: post.id, userid: loggedUser.id };
+		console.log("JSON like ->", JSON);
+
+		dispatch(addLike(JSON))
 			.unwrap()
-			.then(() => {
-				setLiked((prev) => !prev);
+			.then(({ like }) => {
+				setLiked(!!like); // si hay objeto like -> true, si null -> false
 			})
 			.catch((error) => {
 				Swal.fire("Error", error || "No se pudo cambiar el like", "error");
@@ -127,7 +128,7 @@ const PostCard = ({ post }) => {
 
 				<Box sx={{ px: 2, py: 1, display: "flex", justifyContent: "space-between" }}>
 					<Typography variant='body2' color='text.secondary' sx={{ cursor: "pointer", "&:hover": { textDecoration: "underline" } }} onClick={handleOpenLikes}>
-						👍 {post.likes?.length || 0} Me gusta
+						👍 {post.likesCount || 0} Me gusta
 					</Typography>
 					<Typography variant='body2' color='text.secondary'>
 						{post.comments?.length > 1 ? `${post.comments.length} comentarios` : post.comments?.length === 1 ? "1 comentario" : "Aún no hay comentarios"}
@@ -194,7 +195,7 @@ const PostCard = ({ post }) => {
 				{/* Comentarios */}
 				{showCommentBox && (
 					<>
-						{post.comments?.length > 0 && <Divider />}
+						{post.commentsCount > 0 && <Divider />}
 						{post.comments?.map((comment) => (
 							<Box key={comment.id} sx={{ display: "flex", alignItems: "flex-start", m: 1 }}>
 								<Avatar src={comment.user?.avatar_url || loggedUser.avatar_url} sx={{ mr: 1.5 }} />
@@ -242,7 +243,7 @@ const PostCard = ({ post }) => {
 								<ListItemAvatar>
 									<Avatar src={like.user?.avatar_url || ""} />
 								</ListItemAvatar>
-								<ListItemText primary={like.user?.full_name} secondary={new Date(like.created_at).toLocaleString()} />
+								<ListItemText primary={like?.full_name} secondary={new Date(like.created_at).toLocaleString()} />
 							</ListItem>
 						))}
 						{(!post.likes || post.likes.length === 0) && (

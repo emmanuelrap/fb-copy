@@ -38,6 +38,7 @@ export default function UploadImageModal({ onClose, postId }) {
 	const [image, setImage] = React.useState(null); // para preview local
 	const [imageFile, setImageFile] = React.useState(null); // archivo real para subir
 	const [errorUploadImage, setErrorUploadImage] = React.useState(false);
+	const [loading, setloading] = React.useState(false);
 
 	const handleImageChange = (e) => {
 		const file = e.target.files[0];
@@ -48,6 +49,8 @@ export default function UploadImageModal({ onClose, postId }) {
 	};
 
 	const handleCreatePost = async () => {
+		setloading(true);
+		console.log("[ejecución] handleCreatePost()");
 		setErrorUploadImage(false);
 		try {
 			let mediaUrl = null;
@@ -61,7 +64,7 @@ export default function UploadImageModal({ onClose, postId }) {
 			}
 
 			await createPost({
-				userId: JSON.parse(localStorage.getItem("user") || "{}").id,
+				userid: JSON.parse(localStorage.getItem("user") || "{}").id,
 				text_content: postText,
 				media_url: mediaUrl,
 				media_type: mediaUrl ? "image" : null,
@@ -82,14 +85,29 @@ export default function UploadImageModal({ onClose, postId }) {
 		} catch (err) {
 			console.error("Error al crear post:", err);
 			setErrorUploadImage(true);
+		} finally {
+			setloading(false);
 		}
 	};
 
 	return (
-		<BootstrapDialog onClose={onClose} aria-labelledby='customized-dialog-title' open={true} fullWidth maxWidth='xs'>
+		<BootstrapDialog
+			disableEscapeKeyDown={loading}
+			onClose={(event, reason) => {
+				if (loading && (reason === "backdropClick" || reason === "escapeKeyDown")) {
+					return; // evita cerrar
+				}
+				onClose();
+			}}
+			aria-labelledby='customized-dialog-title'
+			open={true}
+			fullWidth
+			maxWidth='xs'
+		>
 			<DialogTitle id='customized-dialog-title' sx={{ textAlign: "center", mt: -1 }}>
 				<strong>Crear Publicación (texto/imagen) </strong>
 				<IconButton
+					disabled={loading}
 					aria-label='close'
 					onClick={onClose}
 					sx={{
@@ -113,6 +131,7 @@ export default function UploadImageModal({ onClose, postId }) {
 							<strong>Carlos Zambrano</strong>
 						</Typography>
 						<Button
+							disabled={loading}
 							size='small'
 							sx={{ textTransform: "none", backgroundColor: "#EEE" }}
 							// Add onClick here to open visibility menu later
@@ -131,7 +150,8 @@ export default function UploadImageModal({ onClose, postId }) {
 					placeholder='¿Qué estás pensando?'
 					fullWidth
 					multiline
-					minRows={3}
+					minRows={2}
+					disabled={loading}
 					sx={{
 						mt: "1rem",
 						"& .MuiOutlinedInput-root": {
@@ -166,7 +186,7 @@ export default function UploadImageModal({ onClose, postId }) {
 
 				{image && (
 					<>
-						<Button sx={{ textTransform: "none", height: "3rem" }} variant='contained' fullWidth onClick={handleCreatePost} disabled={!postText.trim()}>
+						<Button loading={loading} sx={{ textTransform: "none", height: "3rem" }} variant='contained' fullWidth onClick={handleCreatePost} disabled={!postText.trim()}>
 							<strong>Publicar</strong>
 						</Button>
 					</>
