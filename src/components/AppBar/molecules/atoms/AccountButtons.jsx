@@ -36,7 +36,7 @@ const AccountButtons = () => {
 				return;
 			}
 
-			await logoutUser({ email });
+			await logoutUser({ email, lastConnection: new Date().toISOString() });
 			localStorage.removeItem("user");
 
 			navigate("/login");
@@ -91,7 +91,7 @@ const AccountButtons = () => {
 				{/* TOGGLE BUTTONS ---------------------- */}
 				<HorizontalToggleButtonsAccount />
 				{/*  ---------------------- */}
-				<Tooltip title='Account settings'>
+				<Tooltip title='Desplegar menú'>
 					<IconButton onClick={handleClick} size='small' sx={{ ml: "0.25rem" }} aria-controls={open ? "account-menu" : undefined} aria-haspopup='true' aria-expanded={open ? "true" : undefined}>
 						<Avatar sx={{ width: 40, height: 40 }} alt='imagen de perfil' src={JSON.parse(localStorage.getItem("user") || "{}").avatar_url} />
 					</IconButton>

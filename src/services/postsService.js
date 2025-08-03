@@ -1,6 +1,17 @@
 import axios from "axios";
 import { api } from "../api";
 
+// Obtener un  post
+export const getPost = async (id) => {
+	try {
+		const response = await axios.get(api.posts + "/one/" + id);
+		return response.data;
+	} catch (error) {
+		console.error("Error fetching ONE post:", error);
+		throw error;
+	}
+};
+
 // Obtener todos los posts
 export const getPosts = async () => {
 	try {
@@ -31,6 +42,7 @@ export const getPaginatedPosts = async (page = 1, limit = 5) => {
 		throw error;
 	}
 };
+
 // Crear un nuevo post
 export const createPost = async (postData) => {
 	try {

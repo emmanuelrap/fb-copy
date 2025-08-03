@@ -1,6 +1,5 @@
 // UploadImageModal.jsx
 import * as React from "react";
-import axios from "axios";
 import Button from "@mui/material/Button";
 import { styled } from "@mui/material/styles";
 import Dialog from "@mui/material/Dialog";
@@ -19,6 +18,9 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { createPost } from "../../services/postsService";
 import { uploadImageToCloudinary } from "../../services/uploadFile";
 import Swal from "sweetalert2";
+import { useDispatch } from "react-redux";
+import { fetchPosts, resetPosts } from "../../redux/slices/postsSlice";
+import { setReloadPerfilData } from "../../redux/slices/appSlice";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 	"& .MuiPaper-root": {
@@ -34,6 +36,8 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 export default function UploadImageModal({ onClose, postId }) {
+	const dispatch = useDispatch();
+	const loggedUser = JSON.parse(localStorage.getItem("user") || "{}");
 	const [postText, setPostText] = React.useState("");
 	const [image, setImage] = React.useState(null); // para preview local
 	const [imageFile, setImageFile] = React.useState(null); // archivo real para subir
@@ -48,7 +52,7 @@ export default function UploadImageModal({ onClose, postId }) {
 		}
 	};
 
-	const handleCreatePost = async () => {
+	const handleCreatePost = async ({ type = "image" }) => {
 		setloading(true);
 		console.log("[ejecución] handleCreatePost()");
 		setErrorUploadImage(false);
@@ -59,7 +63,7 @@ export default function UploadImageModal({ onClose, postId }) {
 				const formData = new FormData();
 				formData.append("image", imageFile);
 
-				const result = await uploadImageToCloudinary(formData);
+				const result = await uploadImageToCloudinary(formData, loggedUser.id);
 				mediaUrl = result.data.url;
 			}
 
@@ -67,7 +71,7 @@ export default function UploadImageModal({ onClose, postId }) {
 				userid: JSON.parse(localStorage.getItem("user") || "{}").id,
 				text_content: postText,
 				media_url: mediaUrl,
-				media_type: mediaUrl ? "image" : null,
+				media_type: type,
 			});
 
 			Swal.fire({
@@ -80,6 +84,13 @@ export default function UploadImageModal({ onClose, postId }) {
 				timer: 3000,
 				timerProgressBar: true,
 			});
+
+			//TODO Actualizar la data de los post para traer el nuevo
+			dispatch(resetPosts());
+			dispatch(fetchPosts({ page: 1, limit: 5 }));
+
+			//Si lo hace desde un perfil, va a cargar la data de nuevo
+			dispatch(setReloadPerfilData());
 
 			onClose();
 		} catch (err) {
@@ -186,7 +197,18 @@ export default function UploadImageModal({ onClose, postId }) {
 
 				{image && (
 					<>
-						<Button loading={loading} sx={{ textTransform: "none", height: "3rem" }} variant='contained' fullWidth onClick={handleCreatePost} disabled={!postText.trim()}>
+						<Button
+							loading={loading}
+							sx={{ textTransform: "none", height: "3rem" }}
+							variant='contained'
+							fullWidth
+							onClick={() =>
+								handleCreatePost({
+									type: image ? "image" : "text",
+								})
+							}
+							disabled={!postText.trim() && !imageFile}
+						>
 							<strong>Publicar</strong>
 						</Button>
 					</>

@@ -3,14 +3,10 @@
 import axios from "axios";
 import { api } from "../api";
 
-export const getUsers = async () => {
-	try {
-		const response = await axios.get(api.users);
-		return response.data;
-	} catch (error) {
-		console.error("Error fetching users:", error);
-		throw error;
-	}
+export const getUsers = async (signal) => {
+	console.log("[ejecución] getUsers()");
+	const response = await axios.get(api.users, { signal });
+	return response.data;
 };
 
 export const getUserProfile = async (idUser) => {
@@ -59,6 +55,17 @@ export const deleteUser = async (id) => {
 
 	try {
 		const response = await axios.delete(`${api.users}/${id}`);
+		return response.data;
+	} catch (error) {
+		console.error("Error deleting user:", error);
+		throw error;
+	}
+};
+
+export const updateUser = async (id, dataToUpdate) => {
+	console.log("[ejecución] updateUser()", `${api.users}/${id}`);
+	try {
+		const response = await axios.patch(`${api.users}/${id}`, dataToUpdate);
 		return response.data;
 	} catch (error) {
 		console.error("Error deleting user:", error);

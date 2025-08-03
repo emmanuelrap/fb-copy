@@ -5,9 +5,11 @@ import ImageIcon from "@mui/icons-material/Image";
 import EmojiEmotionsIcon from "@mui/icons-material/EmojiEmotions";
 import { useDispatch } from "react-redux";
 import { showModal } from "../../../../../redux/slices/modalSlice";
+import { useIsMobile } from "../../../../../hooks/useIsMobile";
 
 const UploadFilesInicio = () => {
 	const dispatch = useDispatch();
+	const isMobile = useIsMobile();
 	const placeholders = ["¿Qué estás pensando?", "Escribe algo genial...", "Comparte tu opinión", "¿Qué hay de nuevo?", "Cuéntanos algo..."];
 	const [placeholderIndex, setPlaceholderIndex] = useState(0);
 	const [postText, setPostText] = useState("");
@@ -52,7 +54,7 @@ const UploadFilesInicio = () => {
 	const handleButtonCreatePostSentimiento = () => {};
 
 	return (
-		<Paper elevation={3} sx={{ width: "83%", borderRadius: 4, p: 2, my: 2 }}>
+		<Paper elevation={3} sx={{ borderRadius: 4, p: 2, mx: isMobile ? "1rem" : "2rem", mb: isMobile ? "1rem" : "2rem", mt: isMobile ? "1rem" : "2rem" }}>
 			<Box
 				sx={{
 					display: "flex",
@@ -62,6 +64,7 @@ const UploadFilesInicio = () => {
 			>
 				<Avatar src={JSON.parse(localStorage.getItem("user") || "{}").avatar_url} sx={{ mr: 2 }} />
 				<TextField
+					// size='small'
 					value={postText}
 					onChange={(e) => setPostText(e.target.value)}
 					variant='outlined'
@@ -71,7 +74,6 @@ const UploadFilesInicio = () => {
 						"& .MuiOutlinedInput-root": {
 							borderRadius: "32px",
 							backgroundColor: "#f2f4f7",
-							pr: "7rem",
 						},
 						"& .MuiOutlinedInput-notchedOutline": {
 							border: "none",
@@ -116,7 +118,7 @@ const UploadFilesInicio = () => {
 					variant='text'
 					onClick={handleButtonCreatePostVideo}
 					sx={{
-						height: "3.5rem",
+						height: "3rem",
 						display: "flex",
 						justifyContent: "center",
 						alignItems: "center",
@@ -137,7 +139,7 @@ const UploadFilesInicio = () => {
 					fullWidth
 					onClick={handleButtonCreatePostImage}
 					sx={{
-						height: "3.5rem",
+						height: "3rem",
 						display: "flex",
 						justifyContent: "center",
 						alignItems: "center",
@@ -160,7 +162,7 @@ const UploadFilesInicio = () => {
 							fullWidth
 							onClick={handleButtonCreatePostSentimiento}
 							sx={{
-								height: "3.5rem",
+								height: "3rem",
 								display: "flex",
 								justifyContent: "center",
 								alignItems: "center",

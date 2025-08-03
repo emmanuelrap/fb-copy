@@ -30,6 +30,15 @@ const AppRoutes = () => {
 						</PrivateRoute>
 					}
 				/>
+				<Route
+					path='/home/post/:idSharedPost'
+					element={
+						<PrivateRoute>
+							<MainContain />
+						</PrivateRoute>
+					}
+				/>
+
 				<Route path='/' element={<Navigate to='/home' />} />
 				<Route
 					path='/perfil/:idUser'

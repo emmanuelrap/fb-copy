@@ -17,6 +17,7 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { createPost } from "../../services/postsService";
 import { uploadVideoToCloudinary } from "../../services/uploadFile"; // <== usa otro para video
 import Swal from "sweetalert2";
+import { useDispatch } from "react-redux";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 	"& .MuiPaper-root": {
@@ -32,6 +33,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 export default function UploadVideoModal({ onClose }) {
+	const dispatch = useDispatch();
 	const loggedUser = JSON.parse(localStorage.getItem("user") || "{}");
 	const [postText, setPostText] = React.useState("");
 	const [video, setVideo] = React.useState(null); // preview local
@@ -46,7 +48,7 @@ export default function UploadVideoModal({ onClose }) {
 		}
 	};
 
-	const handleCreatePost = async () => {
+	const handleCreatePost = async ({ type = "video" }) => {
 		setErrorUploadVideo(false);
 		try {
 			let mediaUrl = null;
@@ -63,7 +65,7 @@ export default function UploadVideoModal({ onClose }) {
 				userid: JSON.parse(localStorage.getItem("user") || "{}").id,
 				text_content: postText,
 				media_url: mediaUrl,
-				media_type: mediaUrl ? "video" : null,
+				media_type: type,
 			});
 
 			Swal.fire({
@@ -76,6 +78,13 @@ export default function UploadVideoModal({ onClose }) {
 				timer: 3000,
 				timerProgressBar: true,
 			});
+
+			//TODO Actualizar la data de los post para traer el nuevo
+			dispatch(resetPosts());
+			dispatch(fetchPosts({ page: 1, limit: 5 }));
+
+			//Si lo hace desde un perfil, va a cargar la data de nuevo
+			dispatch(setReloadPerfilData());
 
 			onClose();
 		} catch (err) {
@@ -162,7 +171,17 @@ export default function UploadVideoModal({ onClose }) {
 				)}
 
 				{video && (
-					<Button sx={{ textTransform: "none", height: "3rem" }} variant='contained' fullWidth onClick={handleCreatePost} disabled={!postText.trim()}>
+					<Button
+						sx={{ textTransform: "none", height: "3rem" }}
+						variant='contained'
+						fullWidth
+						onClick={() =>
+							handleCreatePost({
+								type: image ? "image" : "text",
+							})
+						}
+						disabled={!postText.trim() && !videoFile}
+					>
 						<strong>Publicar</strong>
 					</Button>
 				)}

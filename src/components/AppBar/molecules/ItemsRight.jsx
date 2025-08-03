@@ -4,7 +4,7 @@ import { Box } from "@mui/material";
 
 const ItemsRight = () => {
 	return (
-		<Box sx={{ display: "flex", flex: 1, justifyContent: "right", alignItems: "center", direction: "column" }}>
+		<Box sx={{ display: "flex", flex: 1, justifyContent: "right", alignItems: "center", direction: "column", ml: "0.5rem" }}>
 			<AccountButtons />
 		</Box>
 	);

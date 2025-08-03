@@ -33,9 +33,9 @@ export default function HorizontalToggleButtonsAccount() {
 
 	return (
 		<div style={{ display: "flex", gap: "0.5rem" }}>
-			<RoundToggleButton selected={selected === "1"} onChange={() => handleClick("1")} aria-label='widgets'>
+			{/* <RoundToggleButton selected={selected === "1"} onChange={() => handleClick("1")} aria-label='widgets'>
 				<WidgetsIcon />
-			</RoundToggleButton>
+			</RoundToggleButton> */}
 			<RoundToggleButton selected={selected === "2"} onChange={() => handleClick("2")} aria-label='messages'>
 				<MessageIcon />
 			</RoundToggleButton>

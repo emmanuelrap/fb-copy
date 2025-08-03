@@ -5,6 +5,8 @@ import ItemsLeft from "./molecules/ItemsLeft";
 import { Paper } from "@mui/material";
 import "../../App.css";
 
+// Tu nueva barra para móviles
+
 const AppBar = ({ pageSelected, onlyHomeIcon }) => {
 	return (
 		<Paper elevation={3} className='AppBar'>

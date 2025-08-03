@@ -16,20 +16,19 @@ import { createPost } from "../../services/postsService";
 import MyBackdrop from "../MUI/MyBackdrop";
 import UploadFilesInicio from "./inicio/molecules/atoms/UploadFilesInicio";
 import { useDispatch, useSelector } from "react-redux";
+import { setReloadPerfilData } from "../../redux/slices/appSlice";
 
 const ProfilePage = () => {
 	const navigate = useNavigate();
-
+	const reloadPerfilData = useSelector((state) => state.app.reloadPerfilData);
 	const { idUser } = useParams(); // Usuario que esta mostrando actualmente
 	const loggedUser = JSON.parse(localStorage.getItem("user") || "{}");
 	const [userDataProfile, setUserDataProfile] = useState(null);
 	const [loading, setLoading] = useState(true);
 	const [loadingChangeImage, setLoadingChangeImage] = useState(false);
 	const [selectedImage, setSelectedImage] = useState(null);
-	const [selectedVideo, setSelectedVideo] = useState(null);
 	const [isMyPerfil, setIsMyPerfil] = useState(false);
-	const [showAllPhotos, setShowAllPhotos] = useState(false);
-	const [showAllVideos, setShowAllVideos] = useState(false);
+	//const [reloadPerfilData, setReloadPerfilData] = useState(true);
 
 	// Menu estado
 	const [anchorEl, setAnchorEl] = useState(null);
@@ -69,6 +68,7 @@ const ProfilePage = () => {
 	}, [idUser, loggedUser.id]);
 
 	if (loading) {
+		// return <MyBackdrop />;
 		return <LoadingMUI text={"Cargando perfil ..."} />;
 	}
 
@@ -167,32 +167,10 @@ const ProfilePage = () => {
 		}
 	};
 
-	//poner en grupos de 3 las imagenes
-	const getGroupedPhotos = (posts, groupSize = 3) => {
-		const filtered = posts.filter((post) => (post.media_type === "image" || post.media_type === "profile_image_update" || post.media_type === "cover_image_update") && post.media_url);
-
-		const grouped = [];
-		for (let i = 0; i < filtered.length; i += groupSize) {
-			grouped.push(filtered.slice(i, i + groupSize));
-		}
-		return grouped;
-	};
-
-	//poner en grupos de 3 los videos
-	const getGroupedVideos = (posts, groupSize = 3) => {
-		const filtered = posts.filter((post) => post.media_type === "video" && post.media_url);
-
-		const grouped = [];
-		for (let i = 0; i < filtered.length; i += groupSize) {
-			grouped.push(filtered.slice(i, i + groupSize));
-		}
-		return grouped;
-	};
-
 	return (
 		<Box sx={{ bgcolor: "#f0f2f5" }}>
 			<AppBar pageSelected={null} onlyHomeIcon={true} />
-			<Box>
+			<Box sx={{ mx: "auto" }}>
 				{/* Portada */}
 				<Box
 					sx={{
@@ -329,9 +307,9 @@ const ProfilePage = () => {
 				</Box>
 
 				{/* Layout de contenido */}
-				<Grid container sx={{ mt: "2em" }}>
+				<Grid container spacing={2} sx={{ mt: 2, px: { xs: 1, md: 4 } }}>
 					{/* Columna Izquierda */}
-					<Grid item xs={12} md={4} sx={{ mx: "auto" }}>
+					<Grid item xs={12} md={4}>
 						<Box
 							sx={{
 								position: "sticky",
@@ -347,84 +325,67 @@ const ProfilePage = () => {
 									</Typography>
 									{userDataProfile?.posts.filter((post) => (post.media_type === "image" || post.media_type === "profile_image_update" || post.media_type === "cover_image_update") && post.media_url)
 										.length > 3 && (
-										<Button size='large' variant='text' sx={{ textTransform: "none" }} onClick={() => setShowAllPhotos((prev) => !prev)}>
-											{showAllPhotos ? "Ver menos imágenes" : "Ver todas las imágenes"}
+										<Button size='large' variant='text' sx={{ textTransform: "none" }}>
+											Ver todas las fotos
 										</Button>
 									)}
 								</Box>
-
-								<>
-									{getGroupedPhotos(userDataProfile?.posts || []).map((group, rowIndex) => {
-										if (!showAllPhotos && rowIndex > 0) return null;
-
-										return (
-											<Grid container spacing={0.5} key={rowIndex}>
-												{group.map((post, index) => (
-													<Grid item xs={4} key={index}>
-														<Box
-															component='img'
-															src={post.media_url}
-															alt='Foto'
-															sx={{
-																width: 120,
-																height: 120,
-																objectFit: "cover",
-																borderRadius: 1,
-																cursor: "pointer",
-															}}
-															onClick={() => setSelectedImage(post.media_url)}
-														/>
-													</Grid>
-												))}
-											</Grid>
-										);
-									})}
-								</>
+								<Grid container spacing={0.5}>
+									{userDataProfile?.posts
+										.slice(0, 3)
+										.filter((post) => (post.media_type === "image" || post.media_type === "profile_image_update" || post.media_type === "cover_image_update") && post.media_url)
+										.map((post) => (
+											<Box
+												component='img'
+												src={post.media_url}
+												alt='Foto'
+												sx={{
+													width: 120,
+													height: 120,
+													objectFit: "cover",
+													borderRadius: 1,
+													cursor: "pointer",
+												}}
+												onClick={() => setSelectedImage(post.media_url)}
+											/>
+										))}
+								</Grid>
 							</Paper>
 
 							{/* VIDEOS */}
-							<Paper sx={{ p: 2, borderRadius: 3, mt: 2 }}>
+							<Paper sx={{ p: 2, borderRadius: 3, mt: "1rem" }}>
 								<Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
 									<Typography variant='h6' mb={1}>
-										Fotos
+										Videos
 									</Typography>
-									{userDataProfile?.posts.filter((post) => post.media_type === "videos" && post.media_url).length > 3 && (
-										<Button size='large' variant='text' sx={{ textTransform: "none" }} onClick={() => setShowAllPhotos((prev) => !prev)}>
-											{showAllVideos ? "Ver menos videos" : "Ver todos los videos"}
+									{userDataProfile?.posts.filter((post) => post.media_type === "video" && post.media_url).length > 3 && (
+										<Button size='large' variant='text' sx={{ textTransform: "none" }}>
+											Ver todas los videos
 										</Button>
 									)}
 								</Box>
-
-								<>
-									{getGroupedVideos(userDataProfile?.posts || []).map((group, rowIndex) => {
-										if (!showAllVideos && rowIndex > 0) return null;
-
-										return (
-											<Grid container spacing={0.5} key={rowIndex}>
-												{group.map((post, index) => (
-													<Grid item xs={4} key={index}>
-														<Box
-															key={index}
-															sx={{
-																width: 120,
-																height: 120,
-																overflow: "hidden",
-																borderRadius: 1,
-																cursor: "pointer",
-															}}
-															onClick={() => setSelectedImage(post.media_url)}
-														>
-															<video src={post.media_url} style={{ width: "100%", height: "100%", objectFit: "cover" }} muted loop playsInline />
-														</Box>
-													</Grid>
-												))}
-											</Grid>
-										);
-									})}
-								</>
+								<Grid container spacing={0.5}>
+									{userDataProfile?.posts
+										.filter((post) => post.media_type === "video" && post.media_url)
+										.map((post, index) => (
+											<Box
+												key={index}
+												sx={{
+													width: 120,
+													height: 120,
+													overflow: "hidden",
+													borderRadius: 1,
+													cursor: "pointer",
+												}}
+												onClick={() => setSelectedImage(post.media_url)}
+											>
+												<video src={post.media_url} style={{ width: "100%", height: "100%", objectFit: "cover" }} muted loop playsInline />
+											</Box>
+										))}
+								</Grid>
 							</Paper>
 
-							{/* AMIGOS */}
+							{/* AMGOS */}
 							<Paper sx={{ p: 2, mt: 2, borderRadius: 3 }}>
 								<Typography variant='h6' mb={1}>
 									Amigos
@@ -434,7 +395,7 @@ const ProfilePage = () => {
 										?.filter((friend) => friend.id !== loggedUser.id) // rectifico que no esté
 										.map((friend) => (
 											<Tooltip key={friend.id} title={friend.full_name}>
-												<IconButton sx={{ p: 0.5, mr: -1 }} onClick={() => navigate(`/perfil/${friend.id}`)}>
+												<IconButton sx={{ p: 0.5 }} onClick={() => navigate(`/perfil/${friend.id}`)}>
 													<Avatar src={friend.avatar_url} sx={{ mx: "auto" }} />
 												</IconButton>
 											</Tooltip>
@@ -445,7 +406,7 @@ const ProfilePage = () => {
 					</Grid>
 
 					{/* Columna Derecha (Publicaciones) */}
-					<Grid item xs={12} md={9} sx={{ mt: -2 }}>
+					<Grid item xs={12} md={9}>
 						{/* <Typography variant='h6' sx={{ ml: "2rem", my: -1 }}>
 							<strong>Publicaciones</strong>
 						</Typography> */}
@@ -474,7 +435,6 @@ const ProfilePage = () => {
 			</Box>
 
 			{/* Modal de imagen seleccionada */}
-			{/* Modal de imagen o video seleccionada */}
 			{selectedImage && (
 				<Box
 					onClick={() => setSelectedImage(null)}
@@ -489,34 +449,19 @@ const ProfilePage = () => {
 						alignItems: "center",
 						justifyContent: "center",
 						zIndex: 1300,
-						cursor: "pointer",
 					}}
 				>
-					{selectedImage.endsWith(".mp4") || selectedImage.endsWith(".webm") || selectedImage.endsWith(".ogg") ? (
-						<video
-							src={selectedImage}
-							controls
-							autoPlay
-							style={{
-								maxWidth: "90%",
-								maxHeight: "90%",
-								borderRadius: 8,
-								boxShadow: "0 0 24px rgba(0,0,0,0.8)",
-							}}
-						/>
-					) : (
-						<Box
-							component='img'
-							src={selectedImage}
-							alt='Media ampliada'
-							sx={{
-								maxWidth: "90%",
-								maxHeight: "90%",
-								borderRadius: 2,
-								boxShadow: 24,
-							}}
-						/>
-					)}
+					<Box
+						component='img'
+						src={selectedImage}
+						alt='Imagen ampliada'
+						sx={{
+							maxWidth: "90%",
+							maxHeight: "90%",
+							borderRadius: 2,
+							boxShadow: 24,
+						}}
+					/>
 				</Box>
 			)}
 

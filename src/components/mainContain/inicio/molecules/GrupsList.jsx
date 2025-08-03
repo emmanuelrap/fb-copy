@@ -12,7 +12,7 @@ import PanoramaFishEyeIcon from "@mui/icons-material/PanoramaFishEye";
 import Diversity3Icon from "@mui/icons-material/Diversity3";
 import Groups2Icon from "@mui/icons-material/Groups2";
 import GroupIcon from "@mui/icons-material/Group";
-import { Avatar, Typography } from "@mui/material";
+import { Avatar, Tooltip, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 const itemsDefault = [
@@ -56,21 +56,23 @@ const GrupsList = () => {
 					{itemsDefault.map((i) => {
 						return (
 							<ListItem disablePadding key={i.text}>
-								<ListItemButton>
-									{typeof i.image === "string" ? (
-										<>
-											<ListItemIcon>
-												<Avatar src={i.image} alt={i.text} sx={{ width: 32, height: 32 }} />
-											</ListItemIcon>
-											<ListItemText primary={i.text} />
-										</>
-									) : (
-										<>
-											<ListItemIcon>{i.image}</ListItemIcon>
-											<ListItemText primary={i.text} />{" "}
-										</>
-									)}
-								</ListItemButton>
+								<Tooltip title='no disponible aún'>
+									<ListItemButton>
+										{typeof i.image === "string" ? (
+											<>
+												<ListItemIcon>
+													<Avatar src={i.image} alt={i.text} sx={{ width: 32, height: 32 }} />
+												</ListItemIcon>
+												<ListItemText primary={i.text} />
+											</>
+										) : (
+											<>
+												<ListItemIcon>{i.image}</ListItemIcon>
+												<ListItemText primary={i.text} />{" "}
+											</>
+										)}
+									</ListItemButton>
+								</Tooltip>
 							</ListItem>
 						);
 					})}
@@ -83,12 +85,14 @@ const GrupsList = () => {
 					{myItems.map((i) => {
 						return (
 							<ListItem disablePadding key={i.text}>
-								<ListItemButton>
-									<ListItemIcon>
-										<Avatar src={i.image} alt={i.text} sx={{ width: 32, height: 32, borderRadius: 2 }} />
-									</ListItemIcon>
-									<ListItemText primary={i.text} />
-								</ListItemButton>
+								<Tooltip title='no disponible aún'>
+									<ListItemButton>
+										<ListItemIcon>
+											<Avatar src={i.image} alt={i.text} sx={{ width: 32, height: 32, borderRadius: 2 }} />
+										</ListItemIcon>
+										<ListItemText primary={i.text} />
+									</ListItemButton>
+								</Tooltip>
 							</ListItem>
 						);
 					})}

@@ -2,8 +2,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { getUsers } from "../../services/userService";
 
-export const fetchUsers = createAsyncThunk("users/fetchUsers", async () => {
-	return await getUsers();
+export const fetchUsers = createAsyncThunk("users/fetchUsers", async (_, thunkAPI) => {
+	console.log("[ejecución] fetchUsers()");
+	return await getUsers(thunkAPI.signal);
 });
 
 const userSlice = createSlice({

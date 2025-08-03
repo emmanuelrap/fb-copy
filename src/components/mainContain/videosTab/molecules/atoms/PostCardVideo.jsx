@@ -23,10 +23,10 @@ import {
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
-import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
 import { useDispatch } from "react-redux";
 import { addComment, addLike } from "../../../../../redux/slices/postsSlice";
 import Swal from "sweetalert2";
+import ShareButton from "../../../inicio/molecules/atoms/ShareButton";
 
 const PostVideoCard = ({ post, fetchPosts }) => {
 	const dispatch = useDispatch();
@@ -164,12 +164,12 @@ const PostVideoCard = ({ post, fetchPosts }) => {
 					<Typography variant='body2' color='text.secondary' sx={{ cursor: "pointer", "&:hover": { textDecoration: "underline" } }} onClick={handleOpenLikes}>
 						👍 {post.likes?.length || 0} Me gusta
 					</Typography>
-					<Typography variant='body2' color='text.secondary'>
+					<Typography variant='body2' color='text.secondary' onClick={handleToggleComment}>
 						{post.comments?.length > 1 ? `${post.comments.length} comentarios` : post.comments?.length === 1 ? "1 comentario" : "Aún no hay comentarios"}
 					</Typography>
 				</Box>
 
-				<CardActions disableSpacing sx={{ borderTop: "1px solid #eee", justifyContent: "space-around" }}>
+				<CardActions disableSpacing sx={{ display: "flex", borderTop: "1px solid #eee", justifyContent: "space-around" }}>
 					<Button
 						onClick={handleLikeClick}
 						sx={{
@@ -206,22 +206,7 @@ const PostVideoCard = ({ post, fetchPosts }) => {
 						<Typography sx={{ ml: 1, fontWeight: "bold" }}>Comentar</Typography>
 					</Button>
 
-					<Tooltip title='No está disponible por ahora' arrow>
-						<span>
-							<Button
-								sx={{
-									flex: 1,
-									textTransform: "none",
-									borderRadius: 3,
-									"&:hover": { backgroundColor: "#e9ecef" },
-									color: "text.secondary",
-								}}
-							>
-								<ShareOutlinedIcon />
-								<Typography sx={{ ml: 1, fontWeight: "bold" }}>Compartir</Typography>
-							</Button>
-						</span>
-					</Tooltip>
+					<ShareButton postUrl={`https://tusitio.com/post/${post.id}`} />
 				</CardActions>
 
 				{showCommentBox && (
@@ -271,7 +256,7 @@ const PostVideoCard = ({ post, fetchPosts }) => {
 						{post.likes?.map((like) => (
 							<ListItem key={like.id}>
 								<ListItemAvatar>
-									<Avatar src={like.user?.avatar_url || ""} />
+									<Avatar src={like?.avatar_url || ""} />
 								</ListItemAvatar>
 								<ListItemText primary={like?.full_name} secondary={new Date(like.created_at).toLocaleString()} />
 							</ListItem>

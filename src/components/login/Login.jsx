@@ -1,10 +1,15 @@
 import React, { useState } from "react";
-import { Box, TextField, Typography, Button, Paper, Divider, Grid } from "@mui/material";
+import { Box, TextField, Typography, Button, Paper, Divider, Grid, InputAdornment, IconButton } from "@mui/material";
 import { authUser, createUser } from "../../services/userService";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import { useDispatch } from "react-redux";
+import { fetchUsers } from "../../redux/slices/userSlice";
+import { toggleReloadUsers } from "../../redux/slices/appSlice";
+import AddIcon from "@mui/icons-material/Add";
 
 export default function LoginPage() {
+	const dispatch = useDispatch();
 	const [loading, setLoading] = useState(false);
 	const [isRegistering, setIsRegistering] = useState(false);
 	const [form, setForm] = useState({
@@ -18,6 +23,15 @@ export default function LoginPage() {
 
 	const handleChange = (e) => {
 		setForm({ ...form, [e.target.name]: e.target.value });
+	};
+
+	const addGmail = () => {
+		if (!form.email.includes("@gmail.com")) {
+			setForm((prev) => ({
+				...prev,
+				email: prev.email + "@gmail.com",
+			}));
+		}
 	};
 
 	const validate = () => {
@@ -39,7 +53,8 @@ export default function LoginPage() {
 		return Object.keys(newErrors).length === 0;
 	};
 
-	const handleSubmit = async () => {
+	const handleSubmit = async (e) => {
+		if (e) e.preventDefault();
 		setLoading(true);
 		console.log("handleSubmit", isRegistering);
 
@@ -60,6 +75,7 @@ export default function LoginPage() {
 					password: form.password,
 					full_name: form.full_name,
 					avatar_url: "",
+					cover_photo_url: "",
 				});
 				console.log("Registro Exitoso");
 				Swal.fire("Registro Completado", "Ya puedes acceder con tu correo y contraseña", "success");
@@ -72,10 +88,17 @@ export default function LoginPage() {
 				const result = await authUser({
 					email: form.email,
 					password: form.password,
+					lastconnection: new Date().toISOString(), // UTC
 				});
 
 				localStorage.setItem("user", JSON.stringify(result.user));
+
+				//obtener usuarios para el chat
+				//dispatch(fetchUsers());
+				dispatch(toggleReloadUsers());
+
 				navigate("/home");
+
 				console.log("Inicio de sesión exitoso");
 			}
 		} catch (err) {
@@ -155,12 +178,31 @@ export default function LoginPage() {
 						{isRegistering ? "Crear cuenta nueva" : "Iniciar sesión"}
 					</Typography>
 
-					<Box component='form' noValidate autoComplete='off' sx={{ mt: 3 }}>
+					<Box component='form' noValidate autoComplete='off' sx={{ mt: 3 }} onSubmit={handleSubmit}>
 						{isRegistering && (
 							<TextField label='Nombre completo' name='full_name' value={form.full_name} onChange={handleChange} fullWidth margin='normal' error={!!errors.name} helperText={errors.name} />
 						)}
 
-						<TextField label='Correo electrónico' name='email' type='email' value={form.email} onChange={handleChange} fullWidth margin='normal' error={!!errors.email} helperText={errors.email} />
+						<TextField
+							label='Correo electrónico'
+							name='email'
+							type='email'
+							value={form.email}
+							onChange={handleChange}
+							fullWidth
+							margin='normal'
+							error={!!errors.email}
+							helperText={errors.email}
+							InputProps={{
+								endAdornment: (
+									<InputAdornment position='end'>
+										<Button variant='outlined' onClick={addGmail} edge='end' aria-label='add gmail' sx={{ textTransform: "none" }}>
+											@gmail.com
+										</Button>
+									</InputAdornment>
+								),
+							}}
+						/>
 
 						<TextField
 							label='Contraseña'
@@ -204,7 +246,7 @@ export default function LoginPage() {
 									backgroundColor: "#166fe5",
 								},
 							}}
-							onClick={handleSubmit}
+							type='submit'
 						>
 							<Typography>{isRegistering ? "Registrarte" : "Iniciar sesión"}</Typography>
 						</Button>

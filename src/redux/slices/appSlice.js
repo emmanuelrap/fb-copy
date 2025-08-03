@@ -1,6 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
+	reloadPerfilData: false,
+	reloadUsers: false,
 	themeColor: "light", // o "dark"
 	user: {
 		id: 1,
@@ -24,6 +26,13 @@ const appSlice = createSlice({
 	name: "app",
 	initialState,
 	reducers: {
+		setReloadPerfilData(state) {
+			state.reloadPerfilData = !state.reloadPerfilData;
+		},
+		toggleReloadUsers(state) {
+			state.reloadUsers = !state.reloadUsers;
+		},
+
 		setThemeColor(state, action) {
 			state.themeColor = action.payload;
 		},
@@ -42,5 +51,5 @@ const appSlice = createSlice({
 	},
 });
 
-export const { setThemeColor, setLoggedUser, clearLoggedUser, setPage, setLimit } = appSlice.actions;
+export const { setReloadPerfilData, toggleReloadUsers, setThemeColor, setLoggedUser, clearLoggedUser, setPage, setLimit } = appSlice.actions;
 export default appSlice.reducer;

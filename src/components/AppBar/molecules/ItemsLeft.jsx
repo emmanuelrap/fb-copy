@@ -2,11 +2,14 @@ import React, { useState } from "react";
 import { Box, Avatar, TextField, Autocomplete, IconButton } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { useNavigate } from "react-router-dom";
+import { useIsMobile } from "../../../hooks/useIsMobile";
 
 const recentSearches = ["Carlos Zambrano", "Recetas caceras", "Videos de risa"];
 
 const ItemsLeft = () => {
+	const isMobile = useIsMobile();
 	const [focused, setFocused] = useState(false);
+
 	const navigate = useNavigate();
 	return (
 		<Box
@@ -28,7 +31,7 @@ const ItemsLeft = () => {
 				<Avatar sx={{ width: 36, height: 36 }} alt='Mi perfil' src='/statics/images/icons/fb.png' />
 			</IconButton>
 
-			<Box sx={{ position: "relative", width: 250 }}>
+			<Box sx={{ position: "relative", width: focused ? 250 : isMobile ? 65 : 250, transition: "width 0.3s ease" }}>
 				<SearchIcon
 					sx={{
 						position: "absolute",
@@ -67,7 +70,7 @@ const ItemsLeft = () => {
 							borderWidth: 0, // Grosor del borde
 						},
 					}}
-					renderInput={(params) => <TextField {...params} label='Buscar en Facebook' variant='outlined' onFocus={() => setFocused(true)} onBlur={() => setFocused(false)} />}
+					renderInput={(params) => <TextField {...params} label={isMobile ? "" : "Buscar en Facebook"} variant='outlined' onFocus={() => setFocused(true)} onBlur={() => setFocused(false)} />}
 				/>
 			</Box>
 		</Box>
