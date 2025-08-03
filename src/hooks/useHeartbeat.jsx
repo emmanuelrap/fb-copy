@@ -15,7 +15,7 @@ export const useUserPing = (user) => {
 			dispatch(fetchUsers());
 			//mandar ping
 			axios
-				.post("http://localhost:5000/api/users/ping", { userid: user.id, lastconnection: new Date().toISOString() })
+				.post(import.meta.env.VITE_API_URL, { userid: user.id, lastconnection: new Date().toISOString() })
 				.then(() => {
 					console.log(`(ping) El usuario ${user.full_name} continua conectado`);
 				})
