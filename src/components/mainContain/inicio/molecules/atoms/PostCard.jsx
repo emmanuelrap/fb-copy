@@ -185,7 +185,7 @@ const PostCard = ({ post }) => {
 			<Card
 				sx={{
 					mx: isMobile ? "1rem" : "2.5rem",
-					mb: isMobile ? "1rem" : "2.5rem",
+					mb: isMobile ? "1rem" : "1.5rem",
 					borderRadius: 5,
 					boxShadow: 5,
 					opacity: deletingPostId === post.id ? 0.5 : 1,
