@@ -4,8 +4,6 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import LoginPage from "../components/login/Login";
 import MainContain from "../components/mainContain/MainContain";
 import ProfilePage from "../components/mainContain/ProfilePage";
-import AppBar from "../components/AppBar/AppBar";
-
 // import NotFoundPage from "../pages/NotFoundPage";
 
 // Protege rutas privadas

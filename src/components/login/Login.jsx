@@ -7,9 +7,11 @@ import { useDispatch } from "react-redux";
 import { fetchUsers } from "../../redux/slices/userSlice";
 import { toggleReloadUsers } from "../../redux/slices/appSlice";
 import AddIcon from "@mui/icons-material/Add";
+import { useIsMobile } from "../../hooks/useIsMobile";
 
 export default function LoginPage() {
 	const dispatch = useDispatch();
+	const isMobile = useIsMobile();
 	const [loading, setLoading] = useState(false);
 	const [isRegistering, setIsRegistering] = useState(false);
 	const [form, setForm] = useState({
@@ -92,9 +94,6 @@ export default function LoginPage() {
 				});
 
 				localStorage.setItem("user", JSON.stringify(result.user));
-
-				//obtener usuarios para el chat
-				//dispatch(fetchUsers());
 				dispatch(toggleReloadUsers());
 
 				navigate("/home");
@@ -110,14 +109,24 @@ export default function LoginPage() {
 	};
 
 	return (
-		<Grid container sx={{ height: "100vh", backgroundColor: "#f0f2f5" }}>
+		<Grid
+			item
+			xs={12}
+			md={6}
+			sx={{
+				display: "flex",
+				justifyContent: "center",
+				alignItems: "center",
+				minHeight: "100vh",
+			}}
+		>
 			{/* Lado izquierdo */}
 			<Grid
 				item
-				xs={12}
+				xs={false}
 				md={6}
 				sx={{
-					display: "flex",
+					display: { xs: "none", md: "flex" },
 					flexDirection: "column",
 					justifyContent: "center",
 					pl: { xs: 2, md: 12 },
@@ -161,12 +170,13 @@ export default function LoginPage() {
 					display: "flex",
 					justifyContent: "center",
 					alignItems: "center",
-					py: 4,
+					py: { sx: 0, md: 4 },
 				}}
 			>
 				<Paper
 					elevation={4}
 					sx={{
+						height: isMobile ? "100vh" : "none",
 						width: "100%",
 						maxWidth: 400,
 						p: 4,
@@ -174,6 +184,21 @@ export default function LoginPage() {
 						backgroundColor: "white",
 					}}
 				>
+					{isMobile && (
+						<Typography
+							variant='h2'
+							sx={{
+								color: "#1877f2",
+								fontWeight: "bold",
+								fontSize: { xs: "2.5rem", md: "4rem" },
+								mb: "1rem",
+								mt: "-0.5rem",
+							}}
+						>
+							SocialApp
+						</Typography>
+					)}
+
 					<Typography variant='h5' sx={{ textAlign: "center", fontWeight: "bold" }}>
 						{isRegistering ? "Crear cuenta nueva" : "Iniciar sesión"}
 					</Typography>

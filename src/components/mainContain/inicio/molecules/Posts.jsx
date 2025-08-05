@@ -76,24 +76,17 @@ const Posts = ({ idSharedPost }) => {
 	}, [handleScroll]);
 
 	return (
-		<Box>
-			<Box sx={{ width: "100%" }}>
-				<UploadFilesInicio />
-			</Box>
+		<Box sx={{ width: "100%" }}>
+			<UploadFilesInicio />
 
 			{loading && mapedPost.length === 0 ? (
-				<Box sx={{ width: "100%" }}>
+				<>
 					<SkeletonPostCard />
 					<SkeletonPostCard />
 					<SkeletonPostCard />
-				</Box>
+				</>
 			) : (
-				mapedPost?.length > 0 &&
-				mapedPost.map((post) => (
-					<Box key={post.id} sx={{ width: "100%" }}>
-						<PostCard post={post} />
-					</Box>
-				))
+				mapedPost?.length > 0 && mapedPost.map((post) => <PostCard post={post} />)
 			)}
 
 			{hasMore}
@@ -103,9 +96,7 @@ const Posts = ({ idSharedPost }) => {
 					<strong>No hay más posts</strong>.
 				</Box>
 			) : (
-				<Box sx={{ width: "100%" }}>
-					<SkeletonPostCard />
-				</Box>
+				<SkeletonPostCard />
 			)}
 		</Box>
 	);
