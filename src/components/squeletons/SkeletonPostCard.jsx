@@ -3,7 +3,7 @@ import { Card, CardHeader, CardContent, CardMedia, CardActions, Avatar, Box, Typ
 
 const SkeletonPostCard = () => {
 	return (
-		<Card sx={{ margin: "1rem auto", borderRadius: 5, boxShadow: 5, mx: "1.5rem" }}>
+		<Card sx={{ margin: "1rem auto", borderRadius: 5, boxShadow: 5, mx: "2.5rem" }}>
 			<CardHeader
 				avatar={
 					<Skeleton variant='circular'>

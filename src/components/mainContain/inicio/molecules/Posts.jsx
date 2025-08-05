@@ -92,7 +92,7 @@ const Posts = ({ idSharedPost }) => {
 			{hasMore}
 
 			{!hasMore ? (
-				<Box sx={{ mt: 2, color: "white", height: "3rem" }}>
+				<Box sx={{ mt: 2, color: "white", height: "2.5rem" }}>
 					<strong>No hay más posts</strong>.
 				</Box>
 			) : (
