@@ -1,9 +1,11 @@
 import React from "react";
 import { Card, CardHeader, CardContent, CardMedia, CardActions, Avatar, Box, Typography, Skeleton, Button } from "@mui/material";
+import { useIsMobile } from "../../hooks/useIsMobile";
 
 const SkeletonPostCard = () => {
+	const isMobile = useIsMobile();
 	return (
-		<Card sx={{ margin: "1rem auto", borderRadius: 5, boxShadow: 5, mx: "2.5rem" }}>
+		<Card sx={{ mx: isMobile ? "0rem" : "2.5rem", mb: isMobile ? "1rem" : "1.5rem", borderRadius: isMobile ? 0 : 5 }}>
 			<CardHeader
 				avatar={
 					<Skeleton variant='circular'>

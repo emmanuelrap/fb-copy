@@ -22,7 +22,6 @@ import {
 	InputAdornment,
 	Tooltip,
 } from "@mui/material";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import { useDispatch } from "react-redux";
@@ -184,9 +183,9 @@ const PostCard = ({ post }) => {
 		<>
 			<Card
 				sx={{
-					mx: isMobile ? "1rem" : "2.5rem",
+					mx: isMobile ? "0rem" : "2.5rem",
 					mb: isMobile ? "1rem" : "1.5rem",
-					borderRadius: 5,
+					borderRadius: isMobile ? 0 : 5,
 					boxShadow: 5,
 					opacity: deletingPostId === post.id ? 0.5 : 1,
 					transition: "opacity 1s ease, transform 0.5s ease",
@@ -194,15 +193,20 @@ const PostCard = ({ post }) => {
 			>
 				<CardHeader
 					sx={{ mb: "-1rem" }}
-					avatar={<Avatar src={post.user?.avatar_url || ""} />}
+					avatar={<Avatar src={post.user?.avatar_url || ""} sx={{ m: isMobile ? -1 : 0 }} />}
 					action={<MenuPost isMine={post.user.id === loggedUser.id} onDelete={() => handleDeletePost(post.id)} setDeletingPostId={setDeletingPostId} postId={post.id} />}
 					title={
-						<Box sx={{ display: "flex" }}>
-							<Typography fontWeight='bold' sx={{ mr: "0.6rem", cursor: "pointer" }} onClick={() => navigate(`/perfil/${post?.user?.id}`)}>
-								{post.user?.full_name} {post?.user?.id === loggedUser?.id && " (Yo) "}
+						<Box sx={{ display: "flex", flexWrap: "wrap" }}>
+							<Typography sx={{ mr: "0.6rem", cursor: "pointer" }} onClick={() => navigate(`/perfil/${post?.user?.id}`)}>
+								<strong>
+									{post.user?.full_name} {post?.user?.id === loggedUser?.id && " (Yo) "}
+								</strong>
+								{(post.media_type === "cover_image_update" || post.media_type === "profile_image_update") && (
+									<Box component='span' sx={{ fontWeight: 400, color: "gray", ml: 0.5 }}>
+										{post.media_type === "cover_image_update" ? "actualizó su foto de portada" : "actualizó su foto de perfil"}
+									</Box>
+								)}
 							</Typography>
-							{post.media_type === "cover_image_update" && <Typography color='text.secondary'>actualizó su foto de portada</Typography>}
-							{post.media_type === "profile_image_update" && <Typography color='text.secondary'>actualizó su foto de perfil</Typography>}
 						</Box>
 					}
 					subheader={new Date(post.created_at).toLocaleString()}
@@ -259,6 +263,7 @@ const PostCard = ({ post }) => {
 									color: liked ? "primary.main" : "inherit",
 									transition: "transform 0.25s ease",
 									transform: animateLike ? "scale(1.5) rotate(-10deg)" : "scale(1) rotate(0deg)",
+									ml: -1,
 								}}
 							/>
 							<Typography sx={{ ml: 1, fontWeight: "bold" }} variant='body1' color={liked ? "primary.main" : "inherit"}>

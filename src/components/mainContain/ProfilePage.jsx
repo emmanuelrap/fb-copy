@@ -16,10 +16,11 @@ import { createPost } from "../../services/postsService";
 import MyBackdrop from "../MUI/MyBackdrop";
 import UploadFilesInicio from "./inicio/molecules/atoms/UploadFilesInicio";
 import { useDispatch, useSelector } from "react-redux";
+import { useIsMobile } from "../../hooks/useIsMobile";
 
 const ProfilePage = () => {
 	const navigate = useNavigate();
-
+	const isMobile = useIsMobile();
 	const { idUser } = useParams(); // Usuario que esta mostrando actualmente
 	const loggedUser = JSON.parse(localStorage.getItem("user") || "{}");
 	const [userDataProfile, setUserDataProfile] = useState(null);
@@ -196,7 +197,7 @@ const ProfilePage = () => {
 				{/* Portada */}
 				<Box
 					sx={{
-						height: 400,
+						height: isMobile ? 200 : 400,
 						backgroundImage: isMyPerfil
 							? `url(${JSON.parse(localStorage.getItem("user") || "{}").cover_photo_url})`
 							: `url(${userDataProfile?.cover_photo_url || "https://www.shutterstock.com/image-vector/add-image-icon-picture-photo-600nw-2480803481.jpg"})`,
@@ -205,7 +206,7 @@ const ProfilePage = () => {
 						backgroundPosition: "center",
 						position: "relative",
 						mt: "3.5rem",
-						borderRadius: 3,
+						borderRadius: isMobile ? 0 : 3,
 					}}
 				>
 					{/* Botón Avatar con menú */}
@@ -282,23 +283,45 @@ const ProfilePage = () => {
 					<input type='file' accept='image/*' hidden ref={fileInputRef} onChange={handleChangePhotoPerfil} />
 					{/* Botón de cambiar portada */}
 					{isMyPerfil ? (
-						<Button
-							disabled={loadingChangeImage}
-							startIcon={<CameraAltIcon />}
-							size='large'
-							variant='contained'
-							component='label'
-							sx={{
-								position: "absolute",
-								bottom: 20,
-								right: 20,
-								borderRadius: 2,
-							}}
-							onClick={handleChangePhotoCover}
-						>
-							{loadingChangeImage ? <strong>Subiendo imagen...</strong> : <strong>Cambiar foto de portada</strong>}
-							<input type='file' accept='image/*' hidden onChange={handleChangePhotoCover} />
-						</Button>
+						<>
+							{isMobile ? (
+								<>
+									<IconButton
+										disabled={loadingChangeImage}
+										size='large'
+										sx={{
+											backgroundColor: "#ccc",
+											position: "absolute",
+											bottom: 15,
+											right: 15,
+											borderRadius: 10,
+											p: 1.2,
+										}}
+										onClick={handleChangePhotoCover}
+									>
+										<CameraAltIcon sx={{ width: "2rem", height: "2rem" }} />
+									</IconButton>
+								</>
+							) : (
+								<Button
+									disabled={loadingChangeImage}
+									startIcon={<CameraAltIcon />}
+									size='large'
+									variant='contained'
+									component='label'
+									sx={{
+										position: "absolute",
+										bottom: 20,
+										right: 20,
+										borderRadius: 2,
+									}}
+									onClick={handleChangePhotoCover}
+								>
+									{loadingChangeImage ? <strong>Subiendo imagen...</strong> : <strong>Cambiar foto de portada</strong>}
+									<input type='file' accept='image/*' hidden onChange={handleChangePhotoCover} />
+								</Button>
+							)}
+						</>
 					) : (
 						<Box
 							sx={{
@@ -319,7 +342,7 @@ const ProfilePage = () => {
 
 				{/* Nombre */}
 				<Box sx={{ textAlign: "center", mt: 12 }}>
-					<Typography variant='h4' fontWeight={800} sx={{ mb: 0.5 }}>
+					<Typography variant={isMobile ? "h5" : "h4"} fontWeight={800} sx={{ mb: 0.5 }}>
 						{userDataProfile?.full_name}
 					</Typography>
 					<Typography variant='body2' color='text.secondary'>
@@ -340,9 +363,9 @@ const ProfilePage = () => {
 							}}
 						>
 							{/* FOTOS */}
-							<Paper sx={{ p: 2, borderRadius: 3 }}>
+							<Paper sx={{ p: isMobile ? 0 : 2, borderRadius: isMobile ? 0 : 3, pt: 1 }}>
 								<Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-									<Typography variant='h6' mb={1}>
+									<Typography variant='h6' mb={1} sx={{ ml: isMobile ? 2 : 0 }}>
 										Fotos
 									</Typography>
 									{userDataProfile?.posts.filter((post) => (post.media_type === "image" || post.media_type === "profile_image_update" || post.media_type === "cover_image_update") && post.media_url)
@@ -383,10 +406,10 @@ const ProfilePage = () => {
 							</Paper>
 
 							{/* VIDEOS */}
-							<Paper sx={{ p: 2, borderRadius: 3, mt: 2 }}>
+							<Paper sx={{ p: isMobile ? 0 : 2, borderRadius: isMobile ? 0 : 3, mt: 2, pt: 1 }}>
 								<Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-									<Typography variant='h6' mb={1}>
-										Fotos
+									<Typography variant='h6' mb={1} sx={{ ml: isMobile ? 2 : 0 }}>
+										Videos
 									</Typography>
 									{userDataProfile?.posts.filter((post) => post.media_type === "videos" && post.media_url).length > 3 && (
 										<Button size='large' variant='text' sx={{ textTransform: "none" }} onClick={() => setShowAllPhotos((prev) => !prev)}>
@@ -400,7 +423,7 @@ const ProfilePage = () => {
 										if (!showAllVideos && rowIndex > 0) return null;
 
 										return (
-											<Grid container spacing={0.5} key={rowIndex}>
+											<Grid container spacing={0.5} key={rowIndex} sx={{ pb: 0.5 }}>
 												{group.map((post, index) => (
 													<Grid item xs={4} key={index}>
 														<Box
@@ -446,12 +469,8 @@ const ProfilePage = () => {
 
 					{/* Columna Derecha (Publicaciones) */}
 					<Grid item xs={12} md={9} sx={{ mt: -2 }}>
-						{/* <Typography variant='h6' sx={{ ml: "2rem", my: -1 }}>
-							<strong>Publicaciones</strong>
-						</Typography> */}
-
 						{isMyPerfil && (
-							<Box sx={{ mt: "-1rem", ml: "1.5rem ", borderRadius: 5, width: "107%", mb: "1rem" }}>
+							<Box sx={{ borderRadius: 5, mb: "1rem", mt: "2rem" }}>
 								<UploadFilesInicio />
 							</Box>
 						)}

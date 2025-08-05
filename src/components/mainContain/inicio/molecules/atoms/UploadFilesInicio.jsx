@@ -54,7 +54,12 @@ const UploadFilesInicio = () => {
 	const handleButtonCreatePostSentimiento = () => {};
 
 	return (
-		<Paper elevation={3} sx={{ borderRadius: 4, p: 2, mx: isMobile ? "1rem" : "2.5rem", mb: isMobile ? "1rem" : "2rem", mt: isMobile ? "1rem" : "2rem" }}>
+		<Paper elevation={3} sx={{ borderRadius: isMobile ? 0 : 4, p: isMobile ? 1.5 : 2, mx: isMobile ? "0rem" : "2.5rem", mb: isMobile ? "1rem" : "2rem", mt: isMobile ? "1rem" : "2rem" }}>
+			{isMobile && (
+				<Typography sx={{ mb: 1 }}>
+					<strong>Publicaciones</strong>
+				</Typography>
+			)}
 			<Box
 				sx={{
 					display: "flex",
