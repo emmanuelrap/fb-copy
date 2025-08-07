@@ -1,16 +1,22 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #f2f4f7;
+
+}
+
 #root {
   margin: 0 auto;
   padding: 0;
   background-color: #f2f4f7;
   min-height: 100vh;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  max-width: 1400px;
+
 }
-html,
-body {
-  margin: 0;
-  padding: 0;
-  
-}
+
+
 
 .AppBar {
   display: flex;
