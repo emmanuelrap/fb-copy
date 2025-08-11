@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Box, Dialog, IconButton, Typography } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import FullscreenIcon from "@mui/icons-material/Fullscreen";
+import { useNavigate } from "react-router-dom";
 
 const PostModal = ({ post, onClose }) => {
+	const navigate = useNavigate();
 	const [expanded, setExpanded] = useState(true);
 
 	if (!post) return null;
@@ -23,6 +24,7 @@ const PostModal = ({ post, onClose }) => {
 			>
 				<IconButton
 					onClick={() => {
+						navigate("/home/");
 						setExpanded(false);
 						onClose();
 					}}

@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import LoginPage from "../components/login/Login";
 import MainContain from "../components/mainContain/MainContain";
 import ProfilePage from "../components/mainContain/ProfilePage";
+import ModalManager from "../components/modals/ModalManager";
 // import NotFoundPage from "../pages/NotFoundPage";
 
 // Protege rutas privadas
@@ -50,6 +51,7 @@ const AppRoutes = () => {
 				{/* 404 */}
 				{/* <Route path='*' element={<NotFoundPage />} /> */}
 			</Routes>
+			<ModalManager />
 		</Router>
 	);
 };

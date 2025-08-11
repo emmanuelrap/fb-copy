@@ -4,6 +4,7 @@ import appReducer from "./slices/appSlice";
 import usersReducer from "./slices/userSlice";
 import postsReducer from "./slices/postsSlice";
 import modalReducer from "./slices/modalSlice";
+import notificationsReducer from "./slices/notificationsSlice";
 
 export const store = configureStore({
 	reducer: {
@@ -12,5 +13,6 @@ export const store = configureStore({
 		users: usersReducer,
 		posts: postsReducer,
 		modal: modalReducer,
+		notifications: notificationsReducer,
 	},
 });

@@ -5,23 +5,23 @@ import ModalManager from "./components/modals/ModalManager";
 import AppRoutes from "./routes/AppRoutes";
 import { fetchUsers } from "./redux/slices/userSlice";
 import { useUserPing } from "./hooks/useHeartbeat";
+import { fetchNotifications } from "./redux/slices/notificationsSlice";
 
 function App() {
 	const dispatch = useDispatch();
 	const reloadUsers = useSelector((state) => state.app.reloadUsers);
-
 	const [user, setUser] = useState(() => {
 		return JSON.parse(localStorage.getItem("user") || "{}");
 	});
 
-	//obtener usuarios para el chat(se necesita reactivar cada ves que inicie sesión)
-
+	//obtener usuarios para el chat
 	useEffect(() => {
 		dispatch(fetchUsers());
+		if (user) dispatch(fetchNotifications(user.id));
 		setUser(JSON.parse(localStorage.getItem("user") || "{}"));
 	}, [reloadUsers]);
 
-	// Escuchar cambios en localStorage (por ej. cambio en otra pestaña)
+	// Escuchar cambios en localStorage
 	useEffect(() => {
 		const onStorageChange = () => {
 			const updatedUser = JSON.parse(localStorage.getItem("user") || "{}");
@@ -35,10 +35,8 @@ function App() {
 	useUserPing(user);
 
 	return (
-		// <div style={{ maxWidth: "1300px", width: "100%" }}>
 		<div style={{ width: "100%" }}>
 			<AppRoutes />
-			<ModalManager />
 		</div>
 	);
 }

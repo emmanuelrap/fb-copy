@@ -5,6 +5,7 @@ export const api = {
 	posts: `${BASE_URL}/posts`,
 	comments: `${BASE_URL}/comments`,
 	likes: `${BASE_URL}/likes`,
+	notifications: `${BASE_URL}/notifications`,
 	friendships: `${BASE_URL}/friendships`,
 	upload_image: `${BASE_URL}/upload/image`,
 	upload_video: `${BASE_URL}/upload/video`,
